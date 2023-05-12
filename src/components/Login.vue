@@ -17,7 +17,6 @@
 <script lang="js">
 import { IonPage, IonContent, IonList, IonItem, IonLabel, IonRouterOutlet, IonCard, IonInput,IonButton, IonTitle } from '@ionic/vue';
 import {RouterLink} from "vue-router";
-// import axios from '../axios.js'
 import axios from "axios";
 export default {
   components: {
@@ -29,7 +28,8 @@ export default {
   data() {
     return {
       email: '',
-      password: ''
+      password: '',
+      token: '',
     };
   },
   props: ['isLogged'],
@@ -41,6 +41,9 @@ export default {
           password: this.password,
           token_name: 'Application'
         })
+        const token = response.data.token;
+        // this.$pinia.store.auth.setToken(token);
+
         this.$emit('update:isLogged', true)
 
       } catch (error) {
@@ -49,8 +52,8 @@ export default {
         } else {
           console.error(error)
         }
-      }
 
+      }
     }
   }
 };

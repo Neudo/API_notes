@@ -69,6 +69,26 @@ export default {
     return {
     };
   },
+  mounted(){
+    this.showNotes()
+  },
+  methods:{
+    async showNotes(){
+      const url = "http://127.0.0.1:8000/notes/";
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+      } else {
+        console.error('Erreur lors de l\'affichage des  notes');
+      }
+    },
+  }
 };
 </script>
 <style scoped>

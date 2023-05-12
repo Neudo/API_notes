@@ -18,6 +18,8 @@
 import { IonPage, IonContent, IonList, IonItem, IonLabel, IonRouterOutlet, IonCard, IonInput,IonButton, IonTitle } from '@ionic/vue';
 import {RouterLink} from "vue-router";
 import axios from "axios";
+import {useAuthStore} from "@/stores/auth.js";
+import {mapActions} from "pinia";
 export default {
   components: {
     IonPage,
@@ -30,29 +32,24 @@ export default {
       email: '',
       password: '',
       token: '',
+      error: false,
+      errors: []
     };
   },
-  props: ['isLogged'],
   methods: {
+    ...mapActions(useAuthStore, { signIn: 'login'}),
     async login() {
+      console.log('login ...')
       try {
-        const response = await axios.post('http://127.0.0.1:8000/api/auth/login', {
-          email: this.email,
-          password: this.password,
-          token_name: 'Application'
-        })
-        const token = response.data.token;
-        // this.$pinia.store.auth.setToken(token);
-
-        this.$emit('update:isLogged', true)
-
-      } catch (error) {
-        if (error.response.status === 401) {
-          console.log(error.response.data.errors)
-        } else {
-          console.error(error)
-        }
-
+        await this.signIn(this.email, this.password);
+        // this.$router.push({name: "account"});
+        console.log('logged')
+      } catch(error) {
+        this.error = true;
+        this.errors.push({
+          $property: error.name,
+          $message: error.message
+        });
       }
     }
   }

@@ -1,5 +1,5 @@
 <template>
-  <h1>Vos notes</h1>
+  <h1>Vos notes BONNE VUE</h1>
   <div v-for="note in notes" key="note.id">
     <ion-card color="tertiary">
       <ion-card-header>

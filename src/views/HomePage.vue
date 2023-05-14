@@ -1,9 +1,12 @@
 <template>
   <ion-page>
-    <ion-content class="ion-padding">
-      <Login :is-logged="isLogged" @update:isLogged="isLogged = $event" v-if="!isLogged" />
-      <NoteListes v-if="isLogged" />
+    <ion-content v-if="!loggedIn" class="ion-padding">
+      <Login  />
     </ion-content>
+    <ion-content v-else class="ion-padding">
+    <NoteListes />
+    </ion-content>
+
   </ion-page>
 </template>
 
@@ -26,7 +29,6 @@ export default {
   },
   data() {
     return {
-      isLogged: false,
     };
   },
   computed: {

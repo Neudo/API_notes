@@ -21,7 +21,7 @@
             <ion-label>Date de création du compte</ion-label>
             <ion-text>{{user.user.created_at}}</ion-text>
           </ion-item>
-          <ion-button @click.prevent="userLogout" expand="block" color="primary" @click="logout">Déconnexion</ion-button>
+          <ion-button @click.prevent="userLogout" expand="block" color="primary">Déconnexion</ion-button>
         </div>
         <div v-else>
           <p>Veuillez vous connecter pour consulter cette page.</p>
@@ -55,8 +55,7 @@ export default {
     async userLogout() {
       try {
         await this.singOut();
-        this.$emit('update:isLogged', false)
-        console.log(this.$emit('update:isLogged', false))
+        // this.$emit('update:isLogged', false)
       } catch (error) {
         console.error(error);
       }

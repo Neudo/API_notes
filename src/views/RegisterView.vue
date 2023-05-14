@@ -17,7 +17,7 @@
           <ion-label position="floating">Mot de passe</ion-label>
           <ion-input v-model="password" type="password" required></ion-input>
         </ion-item>
-        <ion-button type="submit"  expand="block" class="ion-margin-top" color="primary">S'inscrire</ion-button>
+        <ion-button type="submit" expand="block" class="ion-margin-top" color="primary">S'inscrire</ion-button>
       </form>
     </ion-content>
   </ion-page>
@@ -27,7 +27,8 @@
 <script lang="js">
 import { IonPage, IonContent, IonList, IonItem, IonLabel, IonRouterOutlet, IonCard, IonInput,IonButton, IonTitle } from '@ionic/vue';
 import {RouterLink} from "vue-router";
-import axios from "axios";
+import {mapActions} from "pinia";
+import {useAuthStore} from "@/stores/auth.js";
 export default {
   components: {
     IonPage,
@@ -43,25 +44,15 @@ export default {
     };
   },
   methods: {
+    ...mapActions(useAuthStore, { signUp: 'register'}),
     async register() {
       try {
-        const response = await axios.post('http://127.0.0.1:8000/api/auth/register', {
-          email: this.email,
-          password: this.password,
-          name: this.name,
-          token_name: 'Application'
-        })
-
-        console.log(response.data)
-      } catch (error) {
-        if (error.response.status === 401) {
-          console.log(error.response.data.errors)
-        } else {
-          console.error(error)
-        }
+        await this.signUp(this.name, this.email, this.password)
+      } catch(error) {
+        console.log(error)
       }
-
     }
+
   }
 
 };

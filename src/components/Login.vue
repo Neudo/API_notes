@@ -42,7 +42,6 @@ export default {
       try {
         await this.signIn(this.email, this.password);
         // this.$router.push({name: "account"});
-        this.$emit('update:isLogged', true)
       } catch(error) {
         this.error = true;
         this.errors.push({

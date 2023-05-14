@@ -7,20 +7,23 @@ export const useAuthStore = defineStore("auth", {
         loggedIn: false,
     }),
     actions: {
-        async register(username, email, password) {
+        async register(name, email, password) {
             try {
-                const response = await axios.post("http://127.0.0.1:3000/register", {
+                const response = await axios.post("http://127.0.0.1:8000/api/auth/register", {
                     email: email,
                     password: password,
-                    username: username,
+                    name: name,
+                    token_name: "Vuejs"
                 });
-                //console.log(response.data);
 
-                const user = response.data;
-
-                this.loggedIn = true;
-                this.user = user;
-                localStorage.setItem("token", user.token);
+                if (response.status === 200) {
+                    const user = response.data;
+                    this.loggedIn = true;
+                    this.user = user;
+                    localStorage.setItem("token", user.token);
+                } else {
+                    throw new Error('Failed to register user.');
+                }
             } catch (error) {
                 throw error;
             }

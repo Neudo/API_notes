@@ -11,11 +11,11 @@ const routes = [
     name: "Home",
     component: HomePage,
   },
-  {
-    path: "/notes",
-    name: "Notes",
-    component: () => import("../views/NotesListe.vue"),
-  },
+  // {
+  //   path: "/notes",
+  //   name: "Notes",
+  //   component: () => import("../views/NotesListe.vue"),
+  // },
   {
     path: "/note",
     name: "Note",

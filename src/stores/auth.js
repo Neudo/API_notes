@@ -27,7 +27,6 @@ export const useAuthStore = defineStore("auth", {
         },
         async login(email, password) {
             try {
-            console.log('login auth')
                 const response = await axios.post("http://127.0.0.1:8000/api/auth/login", {
                     email: email,
                     password: password,
@@ -46,10 +45,9 @@ export const useAuthStore = defineStore("auth", {
             if (!this.user.token) {
                 throw new Error("Token does not exist");
             }
-
             try {
                 await axios.post(
-                    "http://127.0.0.1:3000/logout",
+                    "http://127.0.0.1:8000/api/auth/logout",
                     {},
                     {
                         headers: {

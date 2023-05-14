@@ -19,27 +19,32 @@
   </ion-page>
 </template>
 <script lang="js">
-import { IonPage, IonContent} from '@ionic/vue';
-
+import { IonPage, IonContent, IonTextarea, IonHeader, IonList, IonLabel} from '@ionic/vue';
+import { useAuthStore } from '../stores/auth'
+import { mapState } from 'pinia'
 
 export default {
-  components: { IonPage,IonContent},
-  data() {
-    return {
-    };
+  name: 'Note',
+  computed: {
+    ...mapState(useAuthStore, ['loggedIn', 'user'])
   },
+  data(){
+    return{
+      content: ''
+    }
+  },
+  components: { IonPage,IonContent, IonTextarea, IonHeader, IonList, IonLabel},
   methods:{
     async addNote() {
-      const content = "Contenu de la note";
       const url = "http://127.0.0.1:8000/api/notes/";
-
+      const store = useAuthStore()
       const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${store.user.token}`
         },
-        body: JSON.stringify({ message: content })
+        body: JSON.stringify({ message: this.content })
       });
 
       if (response.ok) {

@@ -61,6 +61,7 @@
 </template>
 <script lang="js">
 import { IonPage, IonContent, IonAlert, IonButton } from '@ionic/vue';
+import {useAuthStore} from "@/stores/auth.js";
 
 
 export default {
@@ -74,6 +75,29 @@ export default {
     return {
     };
   },
+  mounted() {
+    this.showNotes()
+  },
+  methods:{
+    async showNotes() {
+      console.log('wtf')
+      const url = "http://127.0.0.1:8000/api/notes/";
+      const store = useAuthStore()
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${store.user.token}`
+        },
+      })
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+      } else {
+        console.error('Erreur lors de l\'enregistrement de la note');
+      }
+    }
+  }
 };
 </script>
 <style scoped>

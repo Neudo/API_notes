@@ -39,11 +39,10 @@ export default {
   methods: {
     ...mapActions(useAuthStore, { signIn: 'login'}),
     async login() {
-      console.log('login ...')
       try {
         await this.signIn(this.email, this.password);
         // this.$router.push({name: "account"});
-        console.log('logged')
+        this.$emit('update:isLogged', true)
       } catch(error) {
         this.error = true;
         this.errors.push({

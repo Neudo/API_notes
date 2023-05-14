@@ -8,45 +8,60 @@
 
     <ion-content>
       <div class="account-info">
-        <ion-item>
-          <ion-label>Email</ion-label>
-          <ion-text>EMAIL</ion-text>
-        </ion-item>
+        <div v-if="loggedIn">
+          <ion-item>
+            <ion-label>Email</ion-label>
+            <ion-text>{{ user.user.email }}</ion-text>
+          </ion-item>
+          <ion-item>
+            <ion-label>Nom</ion-label>
+            <ion-text>{{ user.user.name }}</ion-text>
+          </ion-item>
+          <ion-item>
+            <ion-label>Date de création du compte</ion-label>
+            <ion-text>{{user.user.created_at}}</ion-text>
+          </ion-item>
+          <ion-button @click.prevent="userLogout" expand="block" color="primary" @click="logout">Déconnexion</ion-button>
+        </div>
+        <div v-else>
+          <p>Veuillez vous connecter pour consulter cette page.</p>
+        </div>
 
-        <ion-item>
-          <ion-label>Nom</ion-label>
-          <ion-text>Name</ion-text>
-        </ion-item>
-
-        <ion-item>
-          <ion-label>Date de création du compte</ion-label>
-          <ion-text>date de creation</ion-text>
-        </ion-item>
-
-        <ion-button @click.prevent="logout" expand="block" color="primary" @click="logout">Déconnexion</ion-button>
       </div>
     </ion-content>
   </ion-page>
 </template>
 
 <script lang="js">
-import { IonPage, IonContent, IonList, IonItem, IonLabel, IonRouterOutlet, IonCard, IonInput,IonButton, IonTitle } from '@ionic/vue';
+import { IonPage, IonHeader, IonText, IonContent, IonList, IonItem, IonLabel, IonRouterOutlet, IonCard, IonInput,IonButton, IonTitle, IonToolbar } from '@ionic/vue';
 import {RouterLink} from "vue-router";
+import {mapActions, mapState} from "pinia";
+import {useAuthStore} from "@/stores/auth.js";
 export default {
+  name: 'Account',
   components: {
-    IonPage,
-    RouterLink,
-    IonContent,
-    IonList,IonItem,IonLabel,IonRouterOutlet,IonCard,IonInput,IonButton,IonTitle
+    IonPage, RouterLink, IonContent, IonList,IonItem,IonLabel,IonRouterOutlet,IonCard,IonInput,IonButton,IonTitle, IonToolbar, IonText, IonHeader
   },
   data() {
     return {
     };
   },
-  methods:{
-    logout(){
-    }
-  }
+
+  computed: {
+    ...mapState(useAuthStore, ['loggedIn', 'user'])
+  },
+  methods: {
+    ...mapActions(useAuthStore, { singOut: 'logout' }),
+    async userLogout() {
+      try {
+        await this.singOut();
+        this.$emit('update:isLogged', false)
+        console.log(this.$emit('update:isLogged', false))
+      } catch (error) {
+        console.error(error);
+      }
+    },
+  },
 };
 </script>
 

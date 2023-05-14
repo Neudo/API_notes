@@ -1,72 +1,51 @@
 <template>
-      <h1>Vos notes</h1>
+  <h1>Vos notes</h1>
+  <div v-for="note in notes" key="note.id">
+    <ion-card color="tertiary">
+      <ion-card-header>
+        <ion-card-subtitle>Le {{note.created_at}}</ion-card-subtitle>
+      </ion-card-header>
 
-      <ion-card color="tertiary">
-        <ion-card-header>
-          <ion-card-title>Card Title</ion-card-title>
-          <ion-card-subtitle>Le 04/04/2023</ion-card-subtitle>
-        </ion-card-header>
-
-        <ion-card-content>
-          Card Content Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium, dolor dolores id odio quod rem sed sunt velit voluptates? Beatae dolorum et officia voluptatibus! Accusamus adipisci dolorem ex explicabo minus mollitia nemo nobis non, possimus, rem sunt suscipit tempora temporibus vel veritatis. Consequuntur culpa cumque debitis deserunt doloribus illo incidunt iste non officia voluptates? Ab alias aliquid, atque beatae consectetur eius eligendi explicabo facere hic impedit ipsam molestias nemo neque, nesciunt, nobis perferendis perspiciatis porro quam quibusdam repudiandae sed sit soluta totam ut veritatis. Aliquam animi assumenda beatae debitis distinctio dolorum esse eveniet expedita impedit, iste iusto magnam officiis, optio quas quia quos sapiente sed, tenetur. Dicta omnis quasi sed sunt!
-        </ion-card-content>
-        <ion-button color="primary">Editer</ion-button>
-        <ion-button color="danger" id="present-alert">Supprimer</ion-button>
-        <ion-alert
-            trigger="present-alert"
-            header="Alert"
-            sub-header="Important message"
-            message="This is an alert!"
-            :buttons="alertButtons"
-        ></ion-alert>
-      </ion-card>
-
-      <ion-card color="success">
-        <ion-card-header>
-          <ion-card-title>Card Title</ion-card-title>
-          <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-        </ion-card-header>
-
-        <ion-card-content>
-          Card Content Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium architecto et fugit, harum hic provident! Delectus distinctio id ullam! Beatae blanditiis eum ex incidunt laborum modi, molestias optio temporibus voluptate voluptatum. Autem, eveniet.
-        </ion-card-content>
-      </ion-card>
-
-      <ion-card color="light">
-        <ion-card-header>
-          <ion-card-title>Card Title</ion-card-title>
-          <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-        </ion-card-header>
-
-        <ion-card-content>
-          Card Content Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium atque consequatur iste magni officiis soluta voluptas! Atque consectetur consequuntur culpa cumque doloribus, ducimus expedita illo in inventore iste itaque nesciunt sit voluptate. A aliquid atque facilis libero officiis porro soluta temporibus unde veritatis voluptate. Doloremque impedit laudantium maiores veniam vero!
-        </ion-card-content>
-      </ion-card>
-
-      <ion-card color="tertiary">
-        <ion-card-header>
-          <ion-card-title>Card Title</ion-card-title>
-          <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-        </ion-card-header>
-
-        <ion-card-content>
-          Card Content
-        </ion-card-content>
-      </ion-card>
+      <ion-card-content class="card-content" >
+        {{note.content}}
+      </ion-card-content>
+      <ion-button @click.prevent="showEditArea" class="btn-edit" color="primary">Editer</ion-button>
+      <div class="edit-area">
+        <ion-label position="floating">Modifiez votre note</ion-label>
+        <ion-textarea class="new-content" :value="note.content"></ion-textarea>
+        <ion-button @click.prevent="editNote(note.id)" expand="block" color="primary" >Enregistrer</ion-button>
+      </div>
+      <ion-button @click.prevent="deleteNote(note.id)" color="danger">Supprimer</ion-button>
+      <!--      <ion-alert-->
+      <!--          trigger="present-alert"-->
+      <!--          header="Attention"-->
+      <!--          sub-header="Cette action est irréversible."-->
+      <!--          message="Êtes-vous sûre ?"-->
+      <!--          :buttons="alertButtons"-->
+      <!--      ></ion-alert>-->
+    </ion-card>
+  </div>
 </template>
 <script lang="js">
-import { IonPage, IonContent, IonAlert, IonButton } from '@ionic/vue';
+import { IonPage, IonContent, IonAlert, IonButton,IonCardContent, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCard, IonTextarea, IonLabel } from '@ionic/vue';
+import {useAuthStore} from "@/stores/auth.js";
+import { mapState } from 'pinia'
 
 
 export default {
-  components: { IonPage, IonContent,IonButton,IonAlert},
+  name: 'Note liste',
+  computed: {
+    ...mapState(useAuthStore, ['loggedIn', 'user'])
+  },
+  components: {IonPage, IonContent,IonButton,IonAlert, IonCardContent, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCard, IonTextarea, IonLabel},
   setup() {
-    const alertButtons = ['OK'];
-
+    const alertButtons = ['OUI'];
     return { alertButtons };
   },
   data() {
     return {
+      notes: [],
+      newNote: '',
     };
   },
   mounted(){
@@ -74,24 +53,88 @@ export default {
   },
   methods:{
     async showNotes(){
-      const url = "http://127.0.0.1:8000/notes/";
+      const store = useAuthStore()
+      const url = "http://127.0.0.1:8000/api/notes/";
       const response = await fetch(url, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${store.user.token}`
         },
+      });
+      this.notes = []
+      if (response.ok) {
+        const data = await response.json()
+        console.log(data)
+        for (let i = 0; i < data.notes.length; i++) {
+          this.notes.push(data.notes[i])
+        }
+      } else {
+        console.error('Erreur lors de l\'affichage des  notes')
+      }
+    },
+    async deleteNote(id) {
+      const store = useAuthStore()
+      const url = `http://127.0.0.1:8000/api/notes/${id}`
+      try {
+        const response = await fetch(url, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${store.user.token}`
+          },
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log('Deleted note:', data);
+
+        const index = this.notes.findIndex(note => note.id === id);
+        this.notes.splice(index, 1);
+      } catch (error) {
+        console.error('Error deleting note:', error);
+      }
+    },
+    showEditArea(){
+      document.querySelector('.edit-area').classList.toggle('visible')
+      document.querySelector('.btn-edit').classList.toggle('hidden')
+      document.querySelector('.card-content').classList.toggle('hidden')
+    },
+    async editNote(id){
+      const newContent = document.querySelector('.new-content').value
+      const url = `http://127.0.0.1:8000/api/notes/${id}`
+      const store = useAuthStore()
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${store.user.token}`
+        },
+        body: JSON.stringify({ message: newContent })
       });
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
+        console.log(data.message);
+        this.showEditArea()
+        await this.showNotes()
       } else {
-        console.error('Erreur lors de l\'affichage des  notes');
+        console.error('Erreur lors de l\'edition de la note');
       }
-    },
+    }
   }
 };
 </script>
 <style scoped>
+
+.edit-area, .hidden {
+  display: none;
+}
+
+.visible {
+  display: block;
+}
+
 
 ion-button{
   width: 110%;

@@ -13,6 +13,8 @@ import { IonPage, IonContent, IonList, IonItem, IonLabel, IonRouterOutlet, IonCa
 import {RouterLink} from "vue-router";
 import Login from "@/components/Login.vue";
 import NoteListes from "@/components/NoteListes.vue";
+import {mapState} from "pinia";
+import {useAuthStore} from "@/stores/auth.js";
 export default {
   components: {
     NoteListes,
@@ -27,8 +29,10 @@ export default {
       isLogged: false,
     };
   },
+  computed: {
+    ...mapState(useAuthStore, ['loggedIn', 'user'])
+  },
   methods: {
-
   }
 };
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <ion-page>
+  <ion-page v-if="loggedIn">
     <ion-header>
       <ion-toolbar>
         <ion-title>Mon compte</ion-title>
@@ -8,7 +8,6 @@
 
     <ion-content>
       <div class="account-info">
-        <div v-if="loggedIn">
           <ion-item>
             <ion-label>Email</ion-label>
             <ion-text>{{ user.user.email }}</ion-text>
@@ -23,11 +22,11 @@
           </ion-item>
           <ion-button @click.prevent="userLogout" expand="block" color="primary">Déconnexion</ion-button>
         </div>
-        <div v-else>
-          <p>Veuillez vous connecter pour consulter cette page.</p>
-        </div>
-
-      </div>
+    </ion-content>
+  </ion-page>
+  <ion-page v-else >
+    <ion-content>
+      <p>Veuillez vous connecter pour consulter cette page.</p>
     </ion-content>
   </ion-page>
 </template>

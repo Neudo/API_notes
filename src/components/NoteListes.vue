@@ -1,5 +1,5 @@
 <template>
-  <h1>Vos notes BONNE VUE</h1>
+  <h1>Vos notes</h1>
   <div v-for="note in notes" key="note.id">
     <ion-card color="tertiary">
       <ion-card-header>
@@ -9,8 +9,8 @@
       <ion-card-content class="card-content" >
         {{note.content}}
       </ion-card-content>
-      <ion-button @click.prevent="showEditArea" class="btn-edit" color="primary">Editer</ion-button>
-      <div class="edit-area">
+      <ion-button @click="showEditArea" class="btn-edit" color="primary">Editer</ion-button>
+      <div class="edit-area hidden">
         <ion-label position="floating">Modifiez votre note</ion-label>
         <ion-textarea class="new-content" :value="note.content"></ion-textarea>
         <ion-button @click.prevent="editNote(note.id)" expand="block" color="primary" >Enregistrer</ion-button>
@@ -65,7 +65,6 @@ export default {
       this.notes = []
       if (response.ok) {
         const data = await response.json()
-        console.log(data)
         for (let i = 0; i < data.notes.length; i++) {
           this.notes.push(data.notes[i])
         }
@@ -97,7 +96,8 @@ export default {
       }
     },
     showEditArea(){
-      document.querySelector('.edit-area').classList.toggle('visible')
+      console.log(document.querySelector('.edit-area'))
+      document.querySelector('.edit-area').classList.toggle('hidden')
       document.querySelector('.btn-edit').classList.toggle('hidden')
       document.querySelector('.card-content').classList.toggle('hidden')
     },
@@ -127,7 +127,7 @@ export default {
 </script>
 <style scoped>
 
-.edit-area, .hidden {
+.hidden {
   display: none;
 }
 

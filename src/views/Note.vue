@@ -1,5 +1,5 @@
 <template>
-  <ion-page v-if="loggedIn" >
+  <ion-page  v-if="loggedIn" >
     <ion-header>
       <ion-toolbar>
         <ion-title>Nouvelle note</ion-title>
@@ -36,7 +36,7 @@ export default {
   },
   data(){
     return{
-      content: ''
+      content: '',
     }
   },
   components: { IonPage,IonContent, IonTextarea, IonHeader, IonList, IonLabel, IonButton, IonTitle, IonToolbar, IonItem},
@@ -55,7 +55,7 @@ export default {
 
       if (response.ok) {
         const data = await response.json();
-        await router.push({path: '/home'})
+        await router.push('/home')
       } else {
         console.error('Erreur lors de l\'enregistrement de la note');
       }
